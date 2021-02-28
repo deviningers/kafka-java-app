@@ -6,13 +6,14 @@ import java.util.Properties;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import me.sargunvohra.lib.pokekotlin.client.PokeApi;
+
 import me.sargunvohra.lib.pokekotlin.client.PokeApiClient;
+import me.sargunvohra.lib.pokekotlin.model.Pokemon;
 
 /**
  * Author: Devin Ingersoll
  * Description: Kafka producer that 
- * prints out pokemon name by number
+ * prints out pokemon name by number inputed in consumer
  */
 
 public class App  {  
@@ -23,8 +24,7 @@ public class App  {
             System.exit(-1);
         }
 
-        PokeApi pokeApi = new PokeApiClient();
-
+        PokeApiClient pokeApi = new PokeApiClient();
         String topicName = argv[0];
         in = new Scanner(System.in);
         System.out.println("Enter message(type exit to quit)");
@@ -37,12 +37,19 @@ public class App  {
 
         org.apache.kafka.clients.producer.Producer producer = new KafkaProducer(configProperties);
         String line = in.nextLine();
-        while(!line.equals("exit")) {
-            ProducerRecord<String, String> rec = new ProducerRecord<String, String>(topicName,line);
-            producer.send(rec);
+        while(! line.equals("exit")) {
+            // first verify input is a acceptable number
+            if ((line.matches("\\d+$")) && Integer.parseInt(line) < 899 && Integer.parseInt(line) > 0) {
+                // transform input into pokemon name
+                Pokemon pokeJSON = pokeApi.getPokemon(Integer.parseInt(line));
+                String pkmon = pokeJSON.getName();
+                // send name into Consumer
+                ProducerRecord<String, String> rec = new ProducerRecord<String, String>(topicName, pkmon);
+                producer.send(rec);
+            }
             line = in.nextLine();
         }
-        in.close();
+        in.close(); 
         producer.close();
     }
 }
