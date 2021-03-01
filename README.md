@@ -30,5 +30,6 @@ java -cp target/kafka-java-app-1.0-SNAPSHOT-jar-with-dependencies.jar edu.nwmiss
 ```
 
 ## Used repos:
-(pokekotlin)[https://github.com/PokeAPI/pokekotlin]
-(Dr. Case's Kafka API)[https://github.com/denisecase/kafka-api]
+[pokekotlin](https://github.com/PokeAPI/pokekotlin)
+
+[Dr. Case's Kafka API](https://github.com/denisecase/kafka-api)
